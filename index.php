@@ -11,50 +11,10 @@
         <script src="mode/clike/clike.js"></script>
         <script src="mode/php/php.js"></script>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-          <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-          <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-          <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-        <style>.CodeMirror {border-top: 1px solid black; border-bottom: 1px solid black;}
-/*.bmd-modalButton {
-  display: block;
-  margin: 15px auto;
-  padding: 5px 15px;
-}*/
-
-.close-button {
-  overflow: hidden;
-}
-
-.bmd-modalContent {
-  box-shadow: none;
-  background-color: transparent;
-  border: 0;
-}
-
-.bmd-modalContent .close {
-  font-size: 30px;
-  line-height: 30px;
-  padding: 7px 4px 7px 13px;
-  text-shadow: none;
-  opacity: .7;
-  color:#fff;
-}
-
-.bmd-modalContent .close span {
-  display: block;
-}
-
-.bmd-modalContent .close:hover,
-.bmd-modalContent .close:focus {
-  opacity: 1;
-  outline: none;
-}
-
-.bmd-modalContent iframe {
-  display: block;
-  margin: 0 auto;
-}
-    </style>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="styles/index.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
     </head>
     <body>
       <div class="container-fluid" style="margin-top: 10px;">
@@ -78,7 +38,7 @@
           </div>
       </div>
 
-         <div class="modal fade" id="myModal">
+        <div class="modal fade" id="myModal">
             <div class="modal-dialog">
                 <div class="modal-content bmd-modalContent">
                     <div class="modal-body">
@@ -92,37 +52,32 @@
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
-        <?php
-            // include("function.php");
-            // $base = new base64();
-            // if(!empty($_FILES)){
-            //     if($_FILES['openFile']['error']!=4){
-            //         $data = file_get_contents($_FILES["openFile"]["tmp_name"]);
-            //         // file_put_contents("baru.php",$data);
-            //         echo "<textarea id='code' name='code'>";
-            //         echo $data;
-            //         echo "</textarea>";
-            //         $encode= $base->decode($data);
-            //         echo "<textarea id='codehasil' name='codehasil'>";
-            //         echo $encode;
-            //         echo "</textarea>";
-            //     }
-            // }
-        ?>
-        <!-- <form  enctype="multipart/form-data" method="post" id="fm">
-            <input type="file" name="openFile" id="openFile">
-            <button type="submit" id="decode">Decode</button>
-        </form> -->
         <h3>Code</h3>
         <textarea id="code" name="code"></textarea>
         <h3>Result</h3>
         <textarea id="codehasil" name="codehasil"></textarea>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
         <script>
-            (function($) {
+          var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+            lineNumbers: true,
+            matchBrackets: true,
+            lineWrapping: true,
+            mode: "application/x-httpd-php",
+            indentUnit: 4,
+            indentWithTabs: true,
+            readOnly: true
+          });
+          var editor2 = CodeMirror.fromTextArea(document.getElementById("codehasil"), {
+            lineNumbers: true,
+            matchBrackets: true,
+            lineWrapping: true,
+            mode: "application/x-httpd-php",
+            indentUnit: 4,
+            indentWithTabs: true
+          });
+          (function($) {
+              //clear button
               $("#btnClear").click(function(){
-
-                 $("#btnSave").attr('disabled','');
+                $("#btnSave").attr('disabled','');
                 $("#isDecode").html("");
                 $("#lokasi").html("");
                 $("#lokasiFile").val("");
@@ -155,14 +110,10 @@
                               $("#btnClear").trigger('click');
                               alert(data.result);
                             }
-                              // console.log(data.path);
-                              // editor.getDoc().setValue(data.encode);
-                              // editor2.getDoc().setValue(data.decode);
                           }
                       });
                     }
                     //end if jwb
-
                  }else{
                   alert("Terjadi kesalahan lokasi file kosong.Pilih lagi file");
                  }
@@ -174,10 +125,8 @@
                       defaultW: 640,
                       defaultH: 360
                   }, options );
-
                   $(settings.classBtn).on('click', function(e) {
                     var allowFullscreen = $(this).attr('data-bmdVideoFullscreen') || false;
-
                     var dataVideo = {
                       'src': $(this).attr('data-bmdSrc'),
                       'height': $(this).attr('data-bmdHeight') || settings.defaultH,
@@ -185,8 +134,6 @@
                     };
 
                     if ( allowFullscreen ) dataVideo.allowfullscreen = "";
-
-                    // stampiamo i nostri dati nell'iframe
                     $(self).find("iframe").attr(dataVideo);
                     $('iframe').on('load', function() {
                       $('#frame-fm').contents().find('.data-link-full').each(function(index,element){
@@ -219,26 +166,14 @@
                                     alert(data.err);
                                   }
                                   return true;
-                                  // console.log(data.path);
-                                  // editor.getDoc().setValue(data.encode);
-                                  // editor2.getDoc().setValue(data.decode);
                               }
                           });
                         });
                         //end click element
                       });
                     });
-                    //  $('#frame-fm').contents().find('#data-link-full').click(function(){
-                    //   console.log("masuk");
-                    //   // var link = $(this).data('link');
-                    //   // console.log(link);
-                    //   // $("#myModal").modal('hide');
-                    // });
-
-                    // console.log(dataLink);
                   });
-
-                  // se si chiude la modale resettiamo i dati dell'iframe per impedire ad un video di continuare a riprodursi anche quando la modale è chiusa
+                  //remove src from iframe when modal close
                   this.on('hidden.bs.modal', function(){
                     $(this).find('iframe').html("").attr("src", "");
                   });
@@ -246,53 +181,8 @@
                   return this;
               };
 
-          })(jQuery);
-
-
-
-
-          jQuery(document).ready(function(){
             jQuery("#myModal").bmdIframe();
-          });
-          var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
-            lineNumbers: true,
-            matchBrackets: true,
-            lineWrapping: true,
-            mode: "application/x-httpd-php",
-            indentUnit: 4,
-            indentWithTabs: true,
-            readOnly: true
-          });
-          var editor2 = CodeMirror.fromTextArea(document.getElementById("codehasil"), {
-            lineNumbers: true,
-            matchBrackets: true,
-            lineWrapping: true,
-            mode: "application/x-httpd-php",
-            indentUnit: 4,
-            indentWithTabs: true
-          });
-          $("#openFile").change(function() {
-            var path =$("#openFile").val()
-            console.log(path);
-        });
-          $("form#fm").submit(function(e) {
-            e.preventDefault();
-            var formData = new FormData(this);
-            $.ajax({
-                url: "action.php?aksi=decode",
-                type: 'POST',
-                data: formData,
-                success: function (data) {
-                    var data = JSON.parse(data);
-                    console.log(data.path);
-                    editor.getDoc().setValue(data.encode);
-                    editor2.getDoc().setValue(data.decode);
-                },
-                cache: false,
-                contentType: false,
-                processData: false
-            });
-        });
+          })(jQuery);
 
         </script>
     </body>
