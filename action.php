@@ -10,8 +10,6 @@
                  $hasil['aksi'] = $_POST;
                  $decode= $base->decode($data);
                  $hasil['decode'] = $decode;
-                 // $save= $base->save($_FILES["openFile"]["tmp_name"],$decode);
-                 // $handle = fopen($_FILES["openFile"]["tmp_name"], 'r');
                  $handle = $_FILES['openFile'];
                  $hasil['path'] = $handle;
                  echo json_encode($hasil);
@@ -31,9 +29,7 @@
                 $isDecode = strstr( $content, 'eval' )==false?false:true;
                 $result = $content;
                 if($isDecode){
-                    $result2 = $base->decode($content);
-                }else{
-                    $result2 = $base->encode($content);
+                    $result = $base->decode($content);
                 }
             }else{
                 $err = 'File tidak ditemukan';
@@ -51,34 +47,23 @@
     }else if($aksi=="save"){
         $data =$_POST;
         $content = $data['content'];
-        $content2 = $data['content2'];
+        $checked = $data['checked'];
         $isDecode = $data['isDecode'];
         $lokasi = $data['lokasi'];
         $err='';
         $result='';
-        if(trim($content)!='' && trim($isDecode)!='' && trim($lokasi)!='' && trim($content2)!=''){
-            if($isDecode=='true'){
-                // $decode= $base->decode($content);
-                $decode = $content2;
-                $result = $decode;
-                if (!empty($decode)){
-                  if (@file_put_contents($lokasi,htmlspecialchars_decode($decode))){
-                    $result = 'Berhasil menyimpan file';
-                  }else{
-                    $err='Gagal menyimpan file coba lagi';
-                  }
-                }
-            }else{
-                // $encode = $base->encode($content);
-                $encode = $content2;
-                $result = $encode;
-                if (!empty($encode)){
-                  if (@file_put_contents($lokasi,htmlspecialchars_decode($encode))){
-                    $result = 'Berhasil menyimpan file';
-                  }else{
-                    $err='Gagal menyimpan file coba lagi';
-                  }
-                }
+        if(trim($content)!='' && trim($isDecode)!='' && trim($lokasi)!='' && trim($checked)!=''){
+            $content = $isDecode=='true'?$base->encode($content):$content;
+            $hasil = $content;
+            if($isDecode!=$checked){
+                $hasil= $isDecode=='true'?$base->decode($content):$base->encode($content);
+            }
+            if (!empty($content)){
+              if (@file_put_contents($lokasi,htmlspecialchars_decode($hasil))){
+                $result = 'Berhasil menyimpan file';
+              }else{
+                $err='Gagal menyimpan file coba lagi';
+              }
             }
         }else{
             $err = 'Terjadi kesalahan coba lagi';

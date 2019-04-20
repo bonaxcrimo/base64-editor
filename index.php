@@ -23,19 +23,15 @@
           <div class="row">
             <div class="col-md-8">
              <button type="button" class="bmd-modalButton btn btn-default" data-toggle="modal" data-bmdSrc="http://web/seditor/fm.php" data-bmdWidth="640" data-bmdHeight="480" data-target="#myModal"  data-bmdVideoFullscreen="true">Browse File</button>
+
              <button type="button" class="btn btn-default"  id="btnClear">Clear</button>
+             <span id="spanCheck"><input type="checkbox"  id="checkCode">Encoded</span>
              <button type="button" class="btn btn-warning " id="btnSave" disabled="">Save</button>
             </div>
           </div>
-          <div class="row">
-            <div class="col-md-12">
-              <p>
-                <span id="lokasi"></span>
-                <br>
-                <span id="isDecode"></span>
-              </p>
-            </div>
-          </div>
+          <p>
+            <span id="lokasi"></span>
+          </p>
       </div>
 
         <div class="modal fade" id="myModal">
@@ -54,49 +50,53 @@
         </div><!-- /.modal -->
         <h3>Code</h3>
         <textarea id="code" name="code"></textarea>
-        <h3>Result</h3>
-        <textarea id="codehasil" name="codehasil"></textarea>
+        <!-- <h3>Result</h3> -->
+        <!-- <textarea id="codehasil" name="codehasil"></textarea> -->
         <script>
-          var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+          let editor = CodeMirror.fromTextArea(document.getElementById("code"), {
             lineNumbers: true,
             matchBrackets: true,
             lineWrapping: true,
             mode: "application/x-httpd-php",
             indentUnit: 4,
             indentWithTabs: true,
-            readOnly: true
+            readOnly:true
           });
-          var editor2 = CodeMirror.fromTextArea(document.getElementById("codehasil"), {
-            lineNumbers: true,
-            matchBrackets: true,
-            lineWrapping: true,
-            mode: "application/x-httpd-php",
-            indentUnit: 4,
-            indentWithTabs: true
-          });
+          // let editor2 = CodeMirror.fromTextArea(document.getElementById("codehasil"), {
+          //   lineNumbers: true,
+          //   matchBrackets: true,
+          //   lineWrapping: true,
+          //   mode: "application/x-httpd-php",
+          //   indentUnit: 4,
+          //   indentWithTabs: true
+          // });
           (function($) {
               //clear button
+              $("#spanCheck").hide();
               $("#btnClear").click(function(){
                 $("#btnSave").attr('disabled','');
-                $("#isDecode").html("");
                 $("#lokasi").html("");
                 $("#lokasiFile").val("");
-                 editor.getDoc().setValue("");
-                 editor2.getDoc().setValue("");
-                 $("#isDecodeFile").val("");
-                 editor2.setOption("readOnly", false)
+                $("#spanCheck").hide();
+                editor.getDoc().setValue("");
+                editor.setOption("readOnly", true)
+                 // editor2.getDoc().setValue("");
+                $("#isDecodeFile").val("");
+                 // editor2.setOption("readOnly", false)
               });
               $("#btnSave").click(function(){
-                 var lokasiFile = $("#lokasiFile").val();
-                 var decodeFile =$("#isDecodeFile").val();
+                 let lokasiFile = $("#lokasiFile").val();
+                 let decodeFile =$("#isDecodeFile").val();
+                 let checked = $("#checkCode:checked").val()==undefined?'false':'true';
                  if($("#lokasiFile").val().trim()!=""){
-                    var jwb = confirm('Anda Yakin ingin menyimpan file ?');
+                    const status = `dan merubahnya menjadi ${checked=="false"?"Decoded":"Encoded"}`;
+                    let jwb = confirm(`Anda Yakin ingin menyimpan file ${checked!=decodeFile?status:""}?`);
                     if(jwb==1){
-                      var values = {
+                      let values = {
                           'lokasi': lokasiFile,
                           'isDecode' :decodeFile,
                           'content': editor.getValue(),
-                          'content2':editor2.getValue()
+                          'checked':checked
                       };
                       $.ajax({
                           url: "action.php?aksi=save",
@@ -119,15 +119,15 @@
                  }
               });
               $.fn.bmdIframe = function( options ) {
-                  var self = this;
-                  var settings = $.extend({
+                  let self = this;
+                  let settings = $.extend({
                       classBtn: '.bmd-modalButton',
                       defaultW: 640,
                       defaultH: 360
                   }, options );
                   $(settings.classBtn).on('click', function(e) {
-                    var allowFullscreen = $(this).attr('data-bmdVideoFullscreen') || false;
-                    var dataVideo = {
+                    let allowFullscreen = $(this).attr('data-bmdVideoFullscreen') || false;
+                    let dataVideo = {
                       'src': $(this).attr('data-bmdSrc'),
                       'height': $(this).attr('data-bmdHeight') || settings.defaultH,
                       'width': $(this).attr('data-bmdWidth') || settings.defaultW
@@ -138,9 +138,9 @@
                     $('iframe').on('load', function() {
                       $('#frame-fm').contents().find('.data-link-full').each(function(index,element){
                         $(element).click(function(){
-                          var link  = $(this).data('link');
+                          let link  = $(this).data('link');
                           $("#myModal .close").click();
-                            var values = {
+                            let values = {
                                 'nilai': link
                             };
                           $.ajax({
@@ -148,18 +148,21 @@
                               type: 'POST',
                               data:values,
                               success: function (data) {
-                                  var data = JSON.parse(data);
+                                  data = JSON.parse(data);
                                   if(data.err==''){
                                     editor.getDoc().setValue(data.result);
-                                    editor2.getDoc().setValue(data.result2);
-                                    $("#isDecode").html("isDecode : <b>"+data.isDecode +"</b>" );
-                                    $("#lokasi").html("lokasi : <b>"+link+"</b>");
+                                    // editor2.getDoc().setValue(data.result2);
+                                    $("#lokasi").html(`Lokasi : <b>${link}</b>(<span class='text-danger'>${data.isDecode==false?"Not Encoded":"Encoded"})</span>`);
                                     $("#isDecodeFile").val(data.isDecode);
-                                    if(data.isDecode==false){
-                                      editor2.setOption("readOnly", true)
-                                    }else{
-                                      editor2.setOption("readOnly", false)
-                                    }
+                                    editor.setOption("readOnly", false)
+                                    let checkBoxes = $("#checkCode");
+                                    checkBoxes.prop("checked", data.isDecode);
+                                    $("#spanCheck").show();
+                                    // if(data.isDecode==false){
+                                    //   editor2.setOption("readOnly", true)
+                                    // }else{
+                                    //   editor2.setOption("readOnly", false)
+                                    // }
                                     $("#lokasiFile").val(link);
                                     $("#btnSave").removeAttr('disabled');
                                   }else{
