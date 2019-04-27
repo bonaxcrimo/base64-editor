@@ -21,20 +21,24 @@
           <input type="hidden" value="" id="lokasiFile">
           <input type="hidden" value="" id="isDecodeFile">
           <div class="row">
-            <div class="col-md-8">
-             <button type="button" class="bmd-modalButton btn btn-default" data-toggle="modal" data-bmdSrc="http://web/seditor/fm.php" data-bmdWidth="640" data-bmdHeight="480" data-target="#myModal"  data-bmdVideoFullscreen="true">Browse File</button>
+
+            <div class="col-md-6">
+              <p>
+                <span id="lokasi"></span>
+              </p>
+            </div>
+            <div class="col-md-6 text-right">
+             <button type="button" class="bmd-modalButton btn btn-default" data-toggle="modal" data-bmdSrc="http://web/seditor/fm.php" data-bmdWidth="750" data-bmdHeight="540" data-target="#myModal"  data-bmdVideoFullscreen="true">Browse File</button>
 
              <button type="button" class="btn btn-default"  id="btnClear">Clear</button>
              <span id="spanCheck"><input type="checkbox"  id="checkCode">Encoded</span>
              <button type="button" class="btn btn-warning " id="btnSave" disabled="">Save</button>
             </div>
           </div>
-          <p>
-            <span id="lokasi"></span>
-          </p>
+
       </div>
 
-        <div class="modal fade" id="myModal">
+        <div class="modal fade modal-frame" id="myModal">
             <div class="modal-dialog">
                 <div class="modal-content bmd-modalContent">
                     <div class="modal-body">
@@ -48,7 +52,7 @@
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
-        <h3>Code</h3>
+        <h3 style="margin:0" id="title">Code</h3>
         <textarea id="code" name="code"></textarea>
         <!-- <h3>Result</h3> -->
         <!-- <textarea id="codehasil" name="codehasil"></textarea> -->
@@ -62,6 +66,7 @@
             indentWithTabs: true,
             readOnly:true
           });
+          editor.setSize(null,$(window).height() - $("#title").offset().top-30);
           // let editor2 = CodeMirror.fromTextArea(document.getElementById("codehasil"), {
           //   lineNumbers: true,
           //   matchBrackets: true,
@@ -122,8 +127,8 @@
                   let self = this;
                   let settings = $.extend({
                       classBtn: '.bmd-modalButton',
-                      defaultW: 640,
-                      defaultH: 360
+                      defaultW: 800,
+                      defaultH: 540
                   }, options );
                   $(settings.classBtn).on('click', function(e) {
                     let allowFullscreen = $(this).attr('data-bmdVideoFullscreen') || false;

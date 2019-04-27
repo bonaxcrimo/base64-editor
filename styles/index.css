@@ -1,18 +1,23 @@
 .CodeMirror {border-top: 1px solid black; border-bottom: 1px solid black;}
 .close-button {
+  background: #f7f7f7;
   overflow: hidden;
 }
 
 .bmd-modalContent {
   box-shadow: none;
   background-color: transparent;
-  border: 0;
-}
+  /*border: 0;*/
 
+  border: 10px solid white;
+}
+.modal-body{
+  padding: 0px;
+}
 .bmd-modalContent .close {
   font-size: 30px;
   line-height: 30px;
-  padding: 7px 4px 7px 13px;
+  padding: 0px;
   text-shadow: none;
   opacity: .7;
   color:#fff;
@@ -27,8 +32,13 @@
   opacity: 1;
   outline: none;
 }
-
+.close{
+  color:#333 !important;
+}
 .bmd-modalContent iframe {
   display: block;
   margin: 0 auto;
+}
+.modal-frame .modal-dialog{
+  /*width: 700px;*/
 }

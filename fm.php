@@ -1,7 +1,7 @@
 <?php
 //Default Configuration
 $CONFIG = '{"lang":"en","error_reporting":false,"show_hidden":false}';
-
+$root_folder = "";
 /**
  * H3K | Tiny File Manager V2.3.5
  * CCP Programmers | ccpprogrammers@gmail.com
@@ -47,7 +47,7 @@ $edit_files = true;
 $default_timezone = 'Etc/UTC'; // UTC
 
 // Root path for file manager
-$root_path = $_SERVER['DOCUMENT_ROOT']."/bukulagu";
+$root_path = $_SERVER['DOCUMENT_ROOT']."/".$root_folder;
 
 // Root url for links in file manager.Relative to $http_host. Variants: '', 'path/to/subfolder'
 // Will not working if $root_path will be outside of server document root
@@ -1585,7 +1585,7 @@ $num_files = count($files);
 $num_folders = count($folders);
 $all_files_size = 0;
 ?>
-<form action="" method="post" class="pt-3">
+<form action="" method="post">
     <input type="hidden" name="p" value="<?php echo fm_enc(FM_PATH) ?>">
     <input type="hidden" name="group" value="1">
     <div class="table-responsive">
@@ -1608,6 +1608,7 @@ $all_files_size = 0;
                 <th style="display: none"><?php echo lng('Actions') ?></th>
             </tr>
             </thead>
+            <tbody class="me">
             <?php
             // link to parent folder
             if ($parent !== false) {
@@ -1723,11 +1724,11 @@ $all_files_size = 0;
                         <a title="<?php echo lng('Download') ?>" href="?p=<?php echo urlencode(FM_PATH) ?>&amp;dl=<?php echo urlencode($f) ?>"><i class="fa fa-download"></i></a>
                     </td>
                 </tr>
+
                 <?php
                 flush();
                 $ik++;
             }
-
             if (empty($folders) && empty($files)) {
                 ?>
                 <tfoot>
@@ -1754,6 +1755,8 @@ $all_files_size = 0;
                 <?php
             }
             ?>
+
+                </tbody>
         </table>
     </div>
 
@@ -2879,6 +2882,7 @@ global $lang, $root_url;
         .message.ok{border-color:green;color:green}
         .message.error{border-color:red;color:red}
         .message.alert{border-color:orange;color:orange}
+
     </style>
 </head>
 <body class="fm-login-page">
@@ -2941,6 +2945,18 @@ $isStickyNavBar = $show_header==true?$isStickyNavBar:"navbar-normal";
         }
         body.navbar-fixed {
             margin-top: 55px;
+        }
+         tbody {
+          display: block;
+          max-height: 300px;
+          overflow-y: scroll;
+        }
+
+        thead,
+        tbody tr {
+          display: table;
+          width: 100%;
+          table-layout: fixed;
         }
         a:hover, a:visited, a:focus {
             text-decoration: none !important;
@@ -3198,11 +3214,11 @@ $isStickyNavBar = $show_header==true?$isStickyNavBar:"navbar-normal";
     </style>
 </head>
 <body class="<?php echo $isStickyNavBar; ?>">
-<div id="wrapper" class="container-fluid">
+<div id="wrapper">
 <!-- ini body -->
 
 <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
+    <ol class="breadcrumb" style="margin:0;">
 <?php
             $path = fm_clean_path(FM_PATH);
             $root_url = "<li class='breadcrumb-item'><a href='?p='><i class='fa fa-home' aria-hidden='true' title='" . FM_ROOT_PATH . "'></i></a></li>";
