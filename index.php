@@ -1,3 +1,117 @@
+<?php
+include("function.php");
+session_start();
+$ses = @$_SESSION['SESSIONEDITOR'];
+$base = new base64();
+$base->genereatePin();
+if(!isset($_SESSION['SESSIONEDITOR']))
+{
+  $msg = '';
+  if(!empty($_POST)){
+    $data=file_get_contents(".temp");
+    $data= explode("|",$data);
+    if($data[0]==$_POST['fm_usr'] && $data[1]==$_POST['fm_pwd']){
+       $_SESSION['SESSIONEDITOR'] = $data[0];
+       $base->generate("","");
+       if(!isset($_SESSION['last_activity'])){
+          $_SESSION['last_activity'] = time();
+        }
+      header("Refresh:0");
+    }else{
+      $msg = ' <p class="message error">Username atau password salah</p>';
+    }
+  }
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex">
+    <link rel="icon" href="Stnkjkt?img=favicon" type="image/png">
+    <title>Seditor</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        body.fm-login-page{background-color:#f7f9fb;font-size:14px}
+        .fm-login-page .brand{width:121px;overflow:hidden;margin:0 auto;margin:40px auto;margin-bottom:0;position:relative;z-index:1}
+        .fm-login-page .brand img{width:100%}
+        .fm-login-page .card-wrapper{width:360px}
+        .fm-login-page .card{border-color:transparent;box-shadow:0 4px 8px rgba(0,0,0,.05)}
+        .fm-login-page .card-title{margin-bottom:1.5rem;font-size:24px;font-weight:300;letter-spacing:-.5px}
+        .fm-login-page .form-control{border-width:2.3px}
+        .fm-login-page .form-group label{width:100%}
+        .fm-login-page .btn.btn-block{padding:12px 10px}
+        .fm-login-page .footer{margin:40px 0;color:#888;text-align:center}
+        @media screen and (max-width: 425px) {
+            .fm-login-page .card-wrapper{width:90%;margin:0 auto}
+        }
+        @media screen and (max-width: 320px) {
+            .fm-login-page .card.fat{padding:0}
+            .fm-login-page .card.fat .card-body{padding:15px}
+        }
+        .message{padding:4px 7px;border:1px solid #ddd;background-color:#fff}
+        .message.ok{border-color:green;color:green}
+        .message.error{border-color:red;color:red}
+        .message.alert{border-color:orange;color:orange}
+    </style>
+</head>
+<body class="fm-login-page">
+<div id="wrapper" class="container-fluid">
+      <?= $msg ?>
+            <section class="h-100">
+            <div class="container h-100">
+                <div class="row justify-content-md-center h-100">
+                    <div class="card-wrapper">
+                        <div class="text-center">
+                            <h1 >S-Editor</h1>
+                        </div>
+                        <div class="card fat">
+                            <div class="card-body">
+                                <form class="form-signin" action="" method="post" autocomplete="off">
+                                    <div class="form-group">
+                                        <label for="fm_usr">Key</label>
+                                        <input type="text" class="form-control" id="fm_usr" name="fm_usr" required="" readonly="">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="fm_pwd">Pin</label>
+                                        <input type="number" class="form-control" id="fm_pwd" name="fm_pwd" required autofocus="">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-success btn-block" role="button">
+                                           Login
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.slim.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+  $(document).ready(function(){
+    $.ajax({
+      url:"action.php?aksi=getkey",
+      success:function(result){
+        result = JSON.parse(result);
+        $("#fm_usr").val(result.user);
+      }})
+  })
+</script>
+</body>
+</html>
+
+<?php
+}else{
+?>
 <html>
     <head>
         <title>editor</title>
@@ -22,17 +136,19 @@
           <input type="hidden" value="" id="isDecodeFile">
           <div class="row">
 
-            <div class="col-md-6">
+            <div class="col-md-8">
               <p>
                 <span id="lokasi"></span>
               </p>
             </div>
-            <div class="col-md-6 text-right">
-             <button type="button" class="bmd-modalButton btn btn-default" data-toggle="modal" data-bmdSrc="http://web/seditor/fm.php" data-bmdWidth="750" data-bmdHeight="540" data-target="#myModal"  data-bmdVideoFullscreen="true">Browse File</button>
+            <div class="col-md-4 text-right">
+             <button type="button" class="bmd-modalButton btn btn-success" data-toggle="modal"
+             data-bmdSrc="fm.php" id="btnModal" data-bmdWidth="750" data-bmdHeight="540" data-target="#myModal"  data-bmdVideoFullscreen="true">Browse File</button>
 
-             <button type="button" class="btn btn-default"  id="btnClear">Clear</button>
+             <button type="button" class="btn btn-primary"  id="btnClear">Clear</button>
              <span id="spanCheck"><input type="checkbox"  id="checkCode">Encoded</span>
              <button type="button" class="btn btn-warning " id="btnSave" disabled="">Save</button>
+             <button type="button" id="logout" class="btn btn-danger">Logout</button>
             </div>
           </div>
 
@@ -57,6 +173,36 @@
         <!-- <h3>Result</h3> -->
         <!-- <textarea id="codehasil" name="codehasil"></textarea> -->
         <script>
+          setInterval(function(){
+              var time = "<?= SESSION_TIME ?>";
+              $.ajax({
+                  url:"action.php?aksi=lastactivity",
+                  success:function(result){
+                    console.log(result);
+                      if(result==(time-160)){
+                        var ya = confirm("Waktu anda tinggal 5 menit apakah ingin melanjutkan?");
+                        if(ya){
+                          $.ajax({
+                          url:"action.php?aksi=tambah",
+                          success:function(result){
+                          }});
+                        }
+                      }
+                      if(parseInt(result)>=parseInt(time)){
+                         $.ajax({
+                          url:"action.php?aksi=activity",
+                          success:function(result){
+                            location.reload();
+                          }});
+                      }
+                      // if(result>parseInt(time)){
+                      //     location.reload();
+                      // }
+                  }
+              })
+          },1000);
+          </script>
+        <script>
           let editor = CodeMirror.fromTextArea(document.getElementById("code"), {
             lineNumbers: true,
             matchBrackets: true,
@@ -66,7 +212,22 @@
             indentWithTabs: true,
             readOnly:true
           });
-          editor.setSize(null,$(window).height() - $("#title").offset().top-30);
+          $('#myModal').on('hidden.bs.modal', function () {
+              // do something…
+              $.ajax({
+              url:"action.php?aksi=lastlocation",
+              success:function(result){
+                $("#btnModal").attr('data-bmdSrc','fm.php?p=' + result)
+              }});
+          })
+          var isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+          if(isChrome){
+           editor.setSize(null,$(window).height() - $("#title").offset().top-30);
+          }else{
+            editor.setSize(null,700);
+            // editor.setSize(null,$(window).height() - $("#title").offset().top-30);
+          }
+
           // let editor2 = CodeMirror.fromTextArea(document.getElementById("codehasil"), {
           //   lineNumbers: true,
           //   matchBrackets: true,
@@ -75,8 +236,49 @@
           //   indentUnit: 4,
           //   indentWithTabs: true
           // });
+          function ambilData(link){
+            let values = {
+                'nilai': link
+            };
+            $.ajax({
+                url: "action.php?aksi=decodev2",
+                type: 'POST',
+                data:values,
+                success: function (data) {
+                    data = JSON.parse(data);
+                    if(data.err==''){
+                      editor.getDoc().setValue(data.result);
+                      // editor2.getDoc().setValue(data.result2);
+                      $("#lokasi").html(`File Location : <b>${link}</b> (<span class='text-danger'>Status ${data.isDecode==false?"Not Encoded":"Encoded"})</span>`);
+                      $("#isDecodeFile").val(data.isDecode);
+                      editor.setOption("readOnly", false)
+                      let checkBoxes = $("#checkCode");
+                      checkBoxes.prop("checked", data.isDecode);
+                      $("#spanCheck").show();
+                      // if(data.isDecode==false){
+                      //   editor2.setOption("readOnly", true)
+                      // }else{
+                      //   editor2.setOption("readOnly", false)
+                      // }
+                      $("#lokasiFile").val(link);
+                      $("#btnSave").removeAttr('disabled');
+                    }else{
+                      alert(data.err);
+                    }
+                    return true;
+                }
+            });
+          }
           (function($) {
               //clear button
+
+              $("#logout").click(function(){
+                $.ajax({
+                  url:"action.php?aksi=logout",
+                  success:function(result){
+                    location.reload();
+                  }});
+              });
               $("#spanCheck").hide();
               $("#btnClear").click(function(){
                 $("#btnSave").attr('disabled','');
@@ -112,7 +314,8 @@
                             if(data.err.trim()!=''){
                               alert(data.err);
                             }else{
-                              $("#btnClear").trigger('click');
+                              ambilData(lokasiFile);
+                              // $("#btnClear").trigger('click');
                               alert(data.result);
                             }
                           }
@@ -144,38 +347,9 @@
                       $('#frame-fm').contents().find('.data-link-full').each(function(index,element){
                         $(element).click(function(){
                           let link  = $(this).data('link');
+                          console.log(link);
                           $("#myModal .close").click();
-                            let values = {
-                                'nilai': link
-                            };
-                          $.ajax({
-                              url: "action.php?aksi=decodev2",
-                              type: 'POST',
-                              data:values,
-                              success: function (data) {
-                                  data = JSON.parse(data);
-                                  if(data.err==''){
-                                    editor.getDoc().setValue(data.result);
-                                    // editor2.getDoc().setValue(data.result2);
-                                    $("#lokasi").html(`Lokasi : <b>${link}</b>(<span class='text-danger'>${data.isDecode==false?"Not Encoded":"Encoded"})</span>`);
-                                    $("#isDecodeFile").val(data.isDecode);
-                                    editor.setOption("readOnly", false)
-                                    let checkBoxes = $("#checkCode");
-                                    checkBoxes.prop("checked", data.isDecode);
-                                    $("#spanCheck").show();
-                                    // if(data.isDecode==false){
-                                    //   editor2.setOption("readOnly", true)
-                                    // }else{
-                                    //   editor2.setOption("readOnly", false)
-                                    // }
-                                    $("#lokasiFile").val(link);
-                                    $("#btnSave").removeAttr('disabled');
-                                  }else{
-                                    alert(data.err);
-                                  }
-                                  return true;
-                              }
-                          });
+                          ambilData(link);
                         });
                         //end click element
                       });
@@ -195,4 +369,4 @@
         </script>
     </body>
 </html>
-
+<?php } ?>

@@ -1,4 +1,14 @@
 <?php
+session_start();
+// if(!isset($_SESSION['firstenter'])){
+//     $_SESSION['firstenter'] = 'true';
+//     header("location: fm.php?p=".@$_SESSION['path_folder']);
+// }
+//
+if(isset($_GET['p'])){
+    // if($_GET['p']!='')
+    $_SESSION['path_folder'] = $_GET['p'];
+}
 //Default Configuration
 $CONFIG = '{"lang":"en","error_reporting":false,"show_hidden":false}';
 $root_folder = "";
